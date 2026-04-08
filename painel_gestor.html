@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBYK Academy — Painel do Gestor</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a18;min-height:100vh;padding:1.5rem 1rem}
+  .container{max-width:960px;margin:0 auto}
+
+  /* LOGIN */
+  .login-wrap{max-width:380px;margin:6rem auto;background:#fff;border:1px solid #e5e4dd;border-radius:16px;padding:2rem}
+  .login-wrap h2{font-size:18px;font-weight:600;margin-bottom:4px}
+  .login-wrap p{font-size:13px;color:#888;margin-bottom:1.5rem}
+  .login-wrap input{width:100%;padding:10px 12px;border:1px solid #e0dfd8;border-radius:8px;font-size:14px;font-family:inherit;margin-bottom:10px}
+  .login-wrap input:focus{outline:none;border-color:#534AB7}
+  .login-btn{width:100%;padding:11px;background:#534AB7;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+  .login-btn:hover{background:#3C3489}
+  .login-error{font-size:12px;color:#A32D2D;margin-top:8px;display:none}
+
+  /* DASHBOARD */
+  .dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px}
+  .dash-header h1{font-size:20px;font-weight:600}
+  .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{padding:7px 16px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-size:12px;color:#444;font-family:inherit}
+  .btn:hover{background:#f0f0ea}
+  .btn-primary{background:#534AB7;color:#fff;border-color:#534AB7}
+  .btn-primary:hover{background:#3C3489}
+  .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+  @media(max-width:600px){.metrics{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr!important}}
+  .metric{background:#fff;border:1px solid #e5e4dd;border-radius:10px;padding:1rem}
+  .metric-label{font-size:12px;color:#888;margin-bottom:4px}
+  .metric-value{font-size:24px;font-weight:600;color:#1a1a18}
+  .metric-sub{font-size:11px;color:#aaa;margin-top:2px}
+  .filters{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
+  .filter-label{font-size:12px;color:#888}
+  .chip{padding:5px 12px;border-radius:20px;border:1px solid #ccc;font-size:12px;cursor:pointer;color:#666;background:#fff;font-family:inherit}
+  .chip.active{background:#EEEDFE;border-color:#534AB7;color:#534AB7}
+  .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+  .card{background:#fff;border:1px solid #e5e4dd;border-radius:12px;padding:1.25rem}
+  .card.full{grid-column:1/-1}
+  .card-title{font-size:13px;font-weight:500;color:#888;margin-bottom:1rem}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{text-align:left;padding:8px 10px;color:#888;border-bottom:1px solid #e5e4dd;font-weight:500;white-space:nowrap}
+  td{padding:8px 10px;border-bottom:1px solid #e5e4dd;color:#1a1a18;vertical-align:middle}
+  tr:hover td{background:#fafaf8}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .bD{background:#FAECE7;color:#993C1D}.bI{background:#FAEEDA;color:#854F0B}
+  .bS{background:#E1F5EE;color:#0F6E56}.bC{background:#E6F1FB;color:#185FA5}
+  .bH{background:#EEEDFE;color:#534AB7}.bM{background:#E1F5EE;color:#0F6E56}.bL{background:#f0f0ea;color:#666}
+  .empty{text-align:center;padding:3rem;color:#888;font-size:13px}
+  .loading{text-align:center;padding:3rem;color:#888;font-size:14px}
+  .last-upd{font-size:11px;color:#aaa}
+  .table-wrap{overflow-x:auto}
+  .disc-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:1rem;font-size:12px;color:#666}
+  .disc-legend span{display:flex;align-items:center;gap:5px}
+  .disc-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- https://script.google.com/macros/s/AKfycbw_yKTyrQGorTCHxG9Jh77nmnNfRK9r_zpdiT_dPi7PZDJyJ4eieKozjLvxNNWMgRHh/exec -->
+  <script>
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_yKTyrQGorTCHxG9Jh77nmnNfRK9r_zpdiT_dPi7PZDJyJ4eieKozjLvxNNWMgRHh/exec';
+    const PAINEL_SENHA = 'cbyk2025';
+  </script>
+
+  <!-- LOGIN -->
+  <div id="login-page">
+    <div class="login-wrap">
+      <h2>Painel do Gestor</h2>
+      <p>CBYK Academy — GOL Squads</p>
+      <input type="password" id="senha-input" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="login-btn" onclick="doLogin()">Entrar</button>
+      <div class="login-error" id="login-error">Senha incorreta. Tente novamente.</div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash-page" style="display:none">
+    <div class="dash-header">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:#534AB7;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px">CBYK Academy</div>
+        <h1>Painel de análise — GOL Squads</h1>
+      </div>
+      <div class="header-actions">
+        <span class="last-upd" id="last-upd"></span>
+        <button class="btn" onclick="loadData()">↻ Atualizar</button>
+        <button class="btn" onclick="exportCSV()">Exportar CSV</button>
+        <button class="btn" onclick="doLogout()">Sair</button>
+      </div>
+    </div>
+
+    <div id="loading-state" class="loading">Carregando respostas...</div>
+    <div id="empty-state" class="empty" style="display:none">Nenhuma resposta ainda. Aguarde os envios do time.</div>
+
+    <div id="dash-content" style="display:none">
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Total respostas</div><div class="metric-value" id="m-total">0</div><div class="metric-sub" id="m-sub"></div></div>
+        <div class="metric"><div class="metric-label">Middleware</div><div class="metric-value" id="m-mw">0</div></div>
+        <div class="metric"><div class="metric-label">Internacionalização</div><div class="metric-value" id="m-int">0</div></div>
+        <div class="metric"><div class="metric-label">Média de idade</div><div class="metric-value" id="m-idade">—</div></div>
+      </div>
+
+      <div class="filters">
+        <span class="filter-label">Filtros:</span>
+        <button class="chip active" onclick="filt('squad','all',this)">Todos</button>
+        <button class="chip" onclick="filt('squad','Middleware',this)">Middleware</button>
+        <button class="chip" onclick="filt('squad','Internacionalização',this)">Internacionalização</button>
+        <button class="chip" onclick="filt('disc','D',this)">DISC: D</button>
+        <button class="chip" onclick="filt('disc','I',this)">DISC: I</button>
+        <button class="chip" onclick="filt('disc','S',this)">DISC: S</button>
+        <button class="chip" onclick="filt('disc','C',this)">DISC: C</button>
+        <button class="chip" onclick="filt('ia','alto',this)">Alta abertura IA</button>
+      </div>
+
+      <div class="charts-grid">
+        <div class="card">
+          <div class="card-title">Perfil DISC do time</div>
+          <div class="disc-legend">
+            <span><span class="disc-dot" style="background:#D85A30"></span>D — Dominante</span>
+            <span><span class="disc-dot" style="background:#EF9F27"></span>I — Influente</span>
+            <span><span class="disc-dot" style="background:#1D9E75"></span>S — Estável</span>
+            <span><span class="disc-dot" style="background:#378ADD"></span>C — Cauteloso</span>
+          </div>
+          <div style="position:relative;height:180px"><canvas id="cDisc" role="img" aria-label="DISC"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Abertura à inovação / IA</div>
+          <div style="position:relative;height:210px"><canvas id="cIA" role="img" aria-label="Abertura IA"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Distribuição de idade</div>
+          <div style="position:relative;height:200px"><canvas id="cIdade" role="img" aria-label="Idades"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Formato de aprendizado preferido</div>
+          <div style="position:relative;height:200px"><canvas id="cApr" role="img" aria-label="Aprendizado"></canvas></div>
+        </div>
+        <div class="card full">
+          <div class="card-title">Temas técnicos de interesse</div>
+          <div style="position:relative;height:180px"><canvas id="cTemas" role="img" aria-label="Temas"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title">Respostas individuais</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th><th>Squad</th><th>Idade</th><th>Senioridade</th>
+                <th>Área</th><th>DISC</th><th>Abertura IA</th>
+                <th>Aprender</th><th>Objetivo</th><th>Tempo/sem</th><th>Data</th>
+              </tr>
+            </thead>
+            <tbody id="resp-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:2rem">
+        <div class="card-title">Respostas abertas</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nome</th><th>Squad</th><th>Superpoder</th><th>Obstáculo</th><th>Expectativa</th></tr></thead>
+            <tbody id="open-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let allData = [];
+let charts = {};
+let activeF = {squad:'all', disc:null, ia:null};
+
+function doLogin() {
+  const v = document.getElementById('senha-input').value;
+  if (v === PAINEL_SENHA) {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('dash-page').style.display = 'block';
+    try { sessionStorage.setItem('cbyk_auth','1'); } catch(e) {}
+    loadData();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('senha-input').style.borderColor = '#E24B4A';
+    setTimeout(function() { document.getElementById('senha-input').style.borderColor = ''; }, 2000);
+  }
+}
+
+function doLogout() {
+  try { sessionStorage.removeItem('cbyk_auth'); } catch(e) {}
+  document.getElementById('dash-page').style.display = 'none';
+  document.getElementById('login-page').style.display = 'block';
+  document.getElementById('senha-input').value = '';
+}
+
+function loadData() {
+  document.getElementById('loading-state').style.display = 'block';
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('dash-content').style.display = 'none';
+
+  fetch(APPS_SCRIPT_URL)
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+      document.getElementById('loading-state').style.display = 'none';
+      if (!res.data || res.data.length === 0) {
+        document.getElementById('empty-state').style.display = 'block';
+        return;
+      }
+      allData = res.data.map(function(row) {
+        return {
+          nome: row['Nome'] || '—',
+          userId: row['UserID'] || '',
+          squad: row['Squad'] || '—',
+          idade: parseInt(row['Idade']) || 0,
+          senioridade: row['Senioridade'] || '—',
+          area_tech: row['Área Técnica'] || '—',
+          nivel_ia: row['Nível IA (1-5)'] || '—',
+          uso_ia: row['Uso de IA'] || '—',
+          aprender_tech: row['Tema p/ Aprofundar'] || '—',
+          disc: row['Perfil DISC'] || '—',
+          ia_score: parseFloat(row['Abertura Inovação (1-5)']) || null,
+          formato: row['Formato Aprendizado'] || '—',
+          tempo: row['Tempo Semanal'] || '—',
+          objetivo: row['Objetivo Carreira'] || '—',
+          superpoder: row['Superpoder'] || '',
+          barreira: row['Obstáculo'] || '',
+          expectativa: row['Expectativa'] || '',
+          ts: row['Data/Hora'] || ''
+        };
+      });
+      document.getElementById('last-upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('dash-content').style.display = 'block';
+      renderDash();
+    })
+    .catch(function(err) {
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('empty-state').style.display = 'block';
+      document.getElementById('empty-state').innerHTML = '<p>Erro ao carregar dados. Verifique a URL do Web App no arquivo.</p><p style="margin-top:8px;font-size:11px;color:#aaa">'+err+'</p>';
+    });
+}
+
+function filteredData() {
+  return allData.filter(function(r) {
+    if (activeF.squad !== 'all' && r.squad !== activeF.squad) return false;
+    if (activeF.disc && r.disc !== activeF.disc) return false;
+    if (activeF.ia === 'alto' && (!r.ia_score || r.ia_score < 4)) return false;
+    return true;
+  });
+}
+
+function filt(type, val, el) {
+  if (type === 'squad') {
+    activeF.squad = val;
+    document.querySelectorAll('.chip').forEach(function(c) { if (['Todos','Middleware','Internacionalização'].includes(c.textContent)) c.classList.remove('active'); });
+    el.classList.add('active');
+  } else if (type === 'disc') {
+    activeF.disc = activeF.disc === val ? null : val; el.classList.toggle('active');
+  } else {
+    activeF.ia = activeF.ia === val ? null : val; el.classList.toggle('active');
+  }
+  renderDash();
+}
+
+function cnt(arr, key) {
+  var m = {};
+  arr.forEach(function(r) { var v = r[key]; if (v && v !== '—') m[v] = (m[v]||0)+1; });
+  return m;
+}
+
+function renderDash() {
+  var data = filteredData();
+  var all = allData;
+
+  document.getElementById('m-total').textContent = all.length;
+  document.getElementById('m-sub').textContent = data.length !== all.length ? '(' + data.length + ' filtrados)' : '';
+  document.getElementById('m-mw').textContent = all.filter(function(r){return r.squad==='Middleware';}).length;
+  document.getElementById('m-int').textContent = all.filter(function(r){return r.squad==='Internacionalização';}).length;
+  var ages = all.filter(function(r){return r.idade>0;}).map(function(r){return r.idade;});
+  document.getElementById('m-idade').textContent = ages.length ? Math.round(ages.reduce(function(a,b){return a+b;},0)/ages.length)+'a' : '—';
+
+  var discC = cnt(data,'disc');
+  var iaB = {Baixa:0, Média:0, Alta:0};
+  data.forEach(function(r) {
+    if (!r.ia_score) return;
+    if (r.ia_score < 2.5) iaB['Baixa']++;
+    else if (r.ia_score < 3.8) iaB['Média']++;
+    else iaB['Alta']++;
+  });
+  var ageBuckets = {'18–24':0,'25–30':0,'31–36':0,'37–44':0,'45+':0};
+  data.forEach(function(r) {
+    if (!r.idade) return;
+    var a = r.idade;
+    if (a<=24) ageBuckets['18–24']++;
+    else if (a<=30) ageBuckets['25–30']++;
+    else if (a<=36) ageBuckets['31–36']++;
+    else if (a<=44) ageBuckets['37–44']++;
+    else ageBuckets['45+']++;
+  });
+
+  mkChart('cDisc','doughnut',['D','I','S','C'],[discC.D||0,discC.I||0,discC.S||0,discC.C||0],['#D85A30','#EF9F27','#1D9E75','#378ADD']);
+  mkChart('cIA','bar',['Baixa','Média','Alta'],[iaB['Baixa'],iaB['Média'],iaB['Alta']],['#B4B2A9','#FAC775','#5DCAA5']);
+  mkChart('cIdade','bar',Object.keys(ageBuckets),Object.values(ageBuckets),['#AFA9EC']);
+  mkChart('cApr','bar',Object.keys(cnt(data,'formato')),Object.values(cnt(data,'formato')),['#85B7EB']);
+  mkChart('cTemas','hbar',Object.keys(cnt(data,'aprender_tech')),Object.values(cnt(data,'aprender_tech')),['#5DCAA5']);
+
+  var tb = document.getElementById('resp-tbody');
+  tb.innerHTML = '';
+  data.forEach(function(r) {
+    var iaL = !r.ia_score ? '—' : r.ia_score >= 4 ? 'Alta' : r.ia_score >= 2.5 ? 'Média' : 'Baixa';
+    var iaCl = !r.ia_score ? 'bL' : r.ia_score >= 4 ? 'bS' : r.ia_score >= 2.5 ? 'bI' : 'bL';
+    tb.innerHTML += '<tr>' +
+      '<td style="font-weight:600;white-space:nowrap">'+r.nome+'</td>' +
+      '<td>'+r.squad+'</td><td>'+r.idade+'</td><td>'+r.senioridade+'</td>' +
+      '<td style="font-size:11px">'+r.area_tech+'</td>' +
+      '<td><span class="badge b'+r.disc+'">'+r.disc+'</span></td>' +
+      '<td><span class="badge '+iaCl+'">'+iaL+(r.ia_score?' ('+r.ia_score+')':'')+'</span></td>' +
+      '<td style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.aprender_tech+'</td>' +
+      '<td style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.objetivo+'</td>' +
+      '<td>'+r.tempo+'</td>' +
+      '<td style="font-size:11px;color:#aaa;white-space:nowrap">'+r.ts+'</td>' +
+    '</tr>';
+  });
+
+  var ob = document.getElementById('open-tbody');
+  ob.innerHTML = '';
+  data.forEach(function(r) {
+    if (!r.superpoder && !r.barreira && !r.expectativa) return;
+    ob.innerHTML += '<tr>' +
+      '<td style="font-weight:600;white-space:nowrap">'+r.nome+'</td>' +
+      '<td>'+r.squad+'</td>' +
+      '<td style="font-size:12px;max-width:180px">'+r.superpoder+'</td>' +
+      '<td style="font-size:12px;max-width:180px">'+r.barreira+'</td>' +
+      '<td style="font-size:12px;max-width:200px">'+r.expectativa+'</td>' +
+    '</tr>';
+  });
+}
+
+function mkChart(id, type, labels, data, colors) {
+  if (charts[id]) { charts[id].destroy(); }
+  var ctx = document.getElementById(id).getContext('2d');
+  var isH = type === 'hbar'; var isDough = type === 'doughnut';
+  charts[id] = new Chart(ctx, {
+    type: isDough ? 'doughnut' : 'bar',
+    data: { labels: labels, datasets: [{ data: data, backgroundColor: labels.map(function(_,i){return colors[i%colors.length];}), borderWidth: 0, borderRadius: isDough ? 0 : 4 }] },
+    options: {
+      indexAxis: isH ? 'y' : 'x', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: isDough, position: 'right', labels: { boxWidth: 10, font: { size: 11 }, color: '#888' } } },
+      scales: isDough ? {} : { x: { ticks: { color:'#888', font:{size:11} }, grid: { color:'rgba(0,0,0,0.06)' } }, y: { ticks: { color:'#888', font:{size:11} }, grid: { color:'rgba(0,0,0,0.06)' } } }
+    }
+  });
+}
+
+function exportCSV() {
+  if (!allData.length) { alert('Nenhuma resposta para exportar.'); return; }
+  var cols = ['nome','squad','idade','senioridade','area_tech','nivel_ia','uso_ia','aprender_tech','disc','ia_score','formato','tempo','objetivo','superpoder','barreira','expectativa','ts'];
+  var headers = ['Nome','Squad','Idade','Senioridade','Área Técnica','Nível IA','Uso IA','Tema Aprender','DISC','Abertura IA','Formato','Tempo/sem','Objetivo','Superpoder','Obstáculo','Expectativa','Data/Hora'];
+  var rows = [headers.join(','), ...allData.map(function(r) {
+    return cols.map(function(c) { return '"' + String(r[c]||'').replace(/"/g,'""') + '"'; }).join(',');
+  })];
+  var blob = new Blob(['\uFEFF' + rows.join('\n')], {type:'text/csv;charset=utf-8'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'cbyk_academy_respostas.csv'; a.click();
+}
+
+try { if (sessionStorage.getItem('cbyk_auth') === '1') { document.getElementById('login-page').style.display='none'; document.getElementById('dash-page').style.display='block'; loadData(); } } catch(e) {}
+</script>
+</body>
+</html>
