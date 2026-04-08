@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulário de Perfil — GOL Squads</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a18;min-height:100vh;padding:1.5rem 1rem}
+  .container{max-width:680px;margin:0 auto}
+  .form-header{margin-bottom:1.5rem}
+  .form-header h1{font-size:20px;font-weight:600;color:#1a1a18}
+  .form-header p{font-size:13px;color:#666;margin-top:5px;line-height:1.6}
+  .prog-bar{height:4px;background:#e0dfd8;border-radius:4px;margin:1rem 0 .25rem}
+  .prog-fill{height:100%;border-radius:4px;background:#534AB7;transition:width .3s}
+  .resp-counter{font-size:11px;color:#888;text-align:right;margin-bottom:.25rem}
+  .id-banner{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e5e4dd;border-radius:10px;padding:10px 14px;margin-bottom:1.25rem}
+  .id-avatar{width:34px;height:34px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#534AB7;flex-shrink:0}
+  .id-info{flex:1}
+  .id-name{font-size:13px;font-weight:600;color:#1a1a18}
+  .id-sub{font-size:11px;color:#888}
+  .id-edit{font-size:11px;color:#534AB7;cursor:pointer;border:none;background:none;padding:0;font-family:inherit}
+  .name-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+  .save-btn{padding:7px 14px;border:1px solid #ccc;border-radius:8px;background:#f5f5f0;cursor:pointer;font-size:12px;color:#444;white-space:nowrap;font-family:inherit}
+  .section{margin-bottom:1.25rem;background:#fff;border:1px solid #e5e4dd;border-radius:12px;padding:1.25rem}
+  .sec-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+  .question{margin-bottom:1.25rem}.question:last-child{margin-bottom:0}
+  .q-label{font-size:14px;color:#1a1a18;margin-bottom:8px;display:block;line-height:1.5}
+  .options{display:flex;flex-direction:column;gap:6px}
+  .opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;border:1px solid #e0dfd8;cursor:pointer;transition:background .15s;user-select:none}
+  .opt:hover{background:#f5f5f0}
+  .opt.selected{border-color:#534AB7;background:#EEEDFE}
+  .opt input{display:none}
+  .opt-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;transition:all .15s}
+  .opt.selected .opt-dot{background:#534AB7;border-color:#534AB7}
+  .opt-text{font-size:13px;color:#1a1a18}
+  .scale-row{display:flex;gap:6px}
+  .scale-btn{flex:1;padding:9px 4px;text-align:center;border:1px solid #e0dfd8;border-radius:8px;cursor:pointer;font-size:13px;color:#666;background:#fff;font-family:inherit;transition:all .15s}
+  .scale-btn:hover{background:#f5f5f0}
+  .scale-btn.selected{background:#EEEDFE;border-color:#534AB7;color:#534AB7;font-weight:600}
+  .scale-labels{display:flex;justify-content:space-between;font-size:11px;color:#999;margin-top:4px}
+  textarea{width:100%;border:1px solid #e0dfd8;border-radius:8px;padding:10px 12px;font-size:13px;color:#1a1a18;background:#fff;resize:none;font-family:inherit;line-height:1.6}
+  textarea:focus{outline:none;border-color:#534AB7}
+  input[type=number]{width:100px;padding:9px 12px;border:1px solid #e0dfd8;border-radius:8px;font-size:13px;color:#1a1a18;background:#fff;font-family:inherit}
+  input[type=text]{width:100%;padding:9px 12px;border:1px solid #e0dfd8;border-radius:8px;font-size:13px;color:#1a1a18;background:#fff;font-family:inherit}
+  input:focus{outline:none;border-color:#534AB7}
+  .submit-btn{width:100%;padding:13px;background:#534AB7;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;margin-top:1rem;font-family:inherit;transition:background .2s}
+  .submit-btn:hover{background:#3C3489}
+  .submit-btn:disabled{background:#aaa;cursor:not-allowed}
+  .success-msg{text-align:center;padding:3rem 1rem}
+  .success-msg h2{font-size:18px;font-weight:600;margin-bottom:8px;color:#1a1a18}
+  .success-msg p{font-size:13px;color:#666;line-height:1.6}
+  .sending-msg{text-align:center;padding:2rem;color:#666;font-size:14px}
+  .error-box{background:#FCEBEB;border:1px solid #F09595;border-radius:8px;padding:12px 16px;font-size:13px;color:#A32D2D;margin-top:1rem;display:none}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- COLOQUE AQUI A URL DO SEU WEB APP DO APPS SCRIPT -->
+  <script>
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_yKTyrQGorTCHxG9Jh77nmnNfRK9r_zpdiT_dPi7PZDJyJ4eieKozjLvxNNWMgRHh/exec';
+  </script>
+
+  <div class="form-header">
+    <h1>Mapeamento de perfil</h1>
+    <p>Aprox. 4 minutos. Suas respostas são confidenciais e ajudam a personalizar seu desenvolvimento.</p>
+    <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    <div class="resp-counter" id="prog-label">0 de 18 respondidas</div>
+  </div>
+
+  <div id="form-wrap">
+    <div class="id-banner">
+      <div class="id-avatar" id="id-av">?</div>
+      <div class="id-info">
+        <div class="id-name" id="id-name-show">Como você se chama?</div>
+        <div class="id-sub" id="id-sub">Informe seu nome para identificar suas respostas</div>
+        <div class="name-row" id="name-row">
+          <input type="text" id="name-input" placeholder="Seu nome completo" style="flex:1">
+          <button class="save-btn" onclick="saveName()">Salvar</button>
+        </div>
+      </div>
+      <button class="id-edit" onclick="toggleNameEdit()" id="edit-btn" style="display:none">editar</button>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">Sobre você</div>
+      <div class="question" data-q="squad">
+        <span class="q-label">1. Em qual squad você atua?</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="squad" value="Middleware"><div class="opt-dot"></div><span class="opt-text">Middleware</span></label>
+          <label class="opt"><input type="radio" name="squad" value="Internacionalização"><div class="opt-dot"></div><span class="opt-text">Internacionalização</span></label>
+        </div>
+      </div>
+      <div class="question" data-q="idade">
+        <span class="q-label">2. Qual é a sua idade?</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" id="idade-input" min="16" max="80" placeholder="Ex: 28" oninput="updateProgress()">
+          <span style="font-size:13px;color:#888">anos</span>
+        </div>
+      </div>
+      <div class="question" data-q="senioridade">
+        <span class="q-label">3. Qual é o seu nível de senioridade?</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="senioridade" value="Júnior"><div class="opt-dot"></div><span class="opt-text">Júnior (0–2 anos de experiência)</span></label>
+          <label class="opt"><input type="radio" name="senioridade" value="Pleno"><div class="opt-dot"></div><span class="opt-text">Pleno (2–5 anos)</span></label>
+          <label class="opt"><input type="radio" name="senioridade" value="Sênior"><div class="opt-dot"></div><span class="opt-text">Sênior (5+ anos)</span></label>
+          <label class="opt"><input type="radio" name="senioridade" value="Tech Lead / Especialista"><div class="opt-dot"></div><span class="opt-text">Tech Lead / Especialista</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">Perfil técnico</div>
+      <div class="question" data-q="area_tech">
+        <span class="q-label">4. Qual área técnica mais representa seu trabalho atual?</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="area_tech" value="Back-end"><div class="opt-dot"></div><span class="opt-text">Back-end</span></label>
+          <label class="opt"><input type="radio" name="area_tech" value="Front-end"><div class="opt-dot"></div><span class="opt-text">Front-end</span></label>
+          <label class="opt"><input type="radio" name="area_tech" value="Full-stack"><div class="opt-dot"></div><span class="opt-text">Full-stack</span></label>
+          <label class="opt"><input type="radio" name="area_tech" value="DevOps / Infra"><div class="opt-dot"></div><span class="opt-text">DevOps / Infra</span></label>
+          <label class="opt"><input type="radio" name="area_tech" value="QA / Dados / Outro"><div class="opt-dot"></div><span class="opt-text">QA / Dados / Outro</span></label>
+        </div>
+      </div>
+      <div class="question" data-q="nivel_ia">
+        <span class="q-label">5. Como avalia seu conhecimento atual em IA e automação?</span>
+        <div class="scale-row" id="sc-nivel_ia"></div>
+        <div class="scale-labels"><span>Nenhum</span><span>Avançado</span></div>
+      </div>
+      <div class="question" data-q="uso_ia">
+        <span class="q-label">6. Você já usa ferramentas de IA no trabalho?</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="uso_ia" value="Sim, regularmente"><div class="opt-dot"></div><span class="opt-text">Sim, regularmente (Copilot, ChatGPT...)</span></label>
+          <label class="opt"><input type="radio" name="uso_ia" value="Às vezes"><div class="opt-dot"></div><span class="opt-text">Às vezes, experimentando</span></label>
+          <label class="opt"><input type="radio" name="uso_ia" value="Não, mas tenho interesse"><div class="opt-dot"></div><span class="opt-text">Não, mas tenho interesse</span></label>
+          <label class="opt"><input type="radio" name="uso_ia" value="Não me interessa por ora"><div class="opt-dot"></div><span class="opt-text">Não me interessa por ora</span></label>
+        </div>
+      </div>
+      <div class="question" data-q="aprender_tech">
+        <span class="q-label">7. Qual tema técnico você mais quer aprofundar?</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="aprender_tech" value="Arquitetura de software"><div class="opt-dot"></div><span class="opt-text">Arquitetura de software / sistemas</span></label>
+          <label class="opt"><input type="radio" name="aprender_tech" value="IA e Machine Learning"><div class="opt-dot"></div><span class="opt-text">IA e Machine Learning</span></label>
+          <label class="opt"><input type="radio" name="aprender_tech" value="Cloud e DevOps"><div class="opt-dot"></div><span class="opt-text">Cloud, DevOps e Observabilidade</span></label>
+          <label class="opt"><input type="radio" name="aprender_tech" value="Segurança"><div class="opt-dot"></div><span class="opt-text">Segurança e boas práticas</span></label>
+          <label class="opt"><input type="radio" name="aprender_tech" value="Soft skills técnicas"><div class="opt-dot"></div><span class="opt-text">Comunicação e soft skills técnicas</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">Como você trabalha</div>
+      <p style="font-size:12px;color:#888;margin-bottom:1rem">Escolha a opção que mais te representa. Não há resposta certa.</p>
+      <div class="question" data-q="disc1">
+        <span class="q-label">8. Diante de um problema novo, minha primeira reação é:</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="disc1" value="D"><div class="opt-dot"></div><span class="opt-text">Agir rápido e buscar solução direto</span></label>
+          <label class="opt"><input type="radio" name="disc1" value="I"><div class="opt-dot"></div><span class="opt-text">Conversar com o time e trocar ideias</span></label>
+          <label class="opt"><input type="radio" name="disc1" value="S"><div class="opt-dot"></div><span class="opt-text">Entender bem o contexto antes de agir</span></label>
+          <label class="opt"><input type="radio" name="disc1" value="C"><div class="opt-dot"></div><span class="opt-text">Analisar dados e mapear riscos</span></label>
+        </div>
+      </div>
+      <div class="question" data-q="disc2">
+        <span class="q-label">9. Em projetos, o que mais me motiva é:</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="disc2" value="D"><div class="opt-dot"></div><span class="opt-text">Ter autonomia e entregar resultados</span></label>
+          <label class="opt"><input type="radio" name="disc2" value="I"><div class="opt-dot"></div><span class="opt-text">Colaborar e influenciar o time</span></label>
+          <label class="opt"><input type="radio" name="disc2" value="S"><div class="opt-dot"></div><span class="opt-text">Ter estabilidade e um processo claro</span></label>
+          <label class="opt"><input type="radio" name="disc2" value="C"><div class="opt-dot"></div><span class="opt-text">Fazer o trabalho com qualidade e precisão</span></label>
+        </div>
+      </div>
+      <div class="question" data-q="disc3">
+        <span class="q-label">10. Quando recebo um feedback crítico, costumo:</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="disc3" value="D"><div class="opt-dot"></div><span class="opt-text">Questionar e defender meu ponto se discordar</span></label>
+          <label class="opt"><input type="radio" name="disc3" value="I"><div class="opt-dot"></div><span class="opt-text">Receber bem e usar para me energizar</span></label>
+          <label class="opt"><input type="radio" name="disc3" value="S"><div class="opt-dot"></div><span class="opt-text">Ouvir, refletir e ajustar com calma</span></label>
+          <label class="opt"><input type="radio" name="disc3" value="C"><div class="opt-dot"></div><span class="opt-text">Analisar se o feedback tem embasamento</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">Abertura à inovação — escala 1 a 5</div>
+      <p style="font-size:12px;color:#888;margin-bottom:1rem">1 = discordo totalmente &nbsp;|&nbsp; 5 = concordo totalmente</p>
+      <div class="question" data-q="open1">
+        <span class="q-label">11. Gosto de experimentar ferramentas novas, mesmo sem garantia de resultado.</span>
+        <div class="scale-row" id="sc-open1"></div>
+        <div class="scale-labels"><span>Discordo</span><span>Concordo</span></div>
+      </div>
+      <div class="question" data-q="open2">
+        <span class="q-label">12. Me sinto confortável com mudanças frequentes no processo de trabalho.</span>
+        <div class="scale-row" id="sc-open2"></div>
+        <div class="scale-labels"><span>Discordo</span><span>Concordo</span></div>
+      </div>
+      <div class="question" data-q="open3">
+        <span class="q-label">13. Prefiro aprender no ritmo do mercado, mesmo descartando o que aprendi antes.</span>
+        <div class="scale-row" id="sc-open3"></div>
+        <div class="scale-labels"><span>Discordo</span><span>Concordo</span></div>
+      </div>
+      <div class="question" data-q="open4">
+        <span class="q-label">14. Costumo sugerir melhorias de processo ou produto espontaneamente.</span>
+        <div class="scale-row" id="sc-open4"></div>
+        <div class="scale-labels"><span>Discordo</span><span>Concordo</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">Desenvolvimento profissional</div>
+      <div class="question" data-q="formato">
+        <span class="q-label">15. Como você aprende melhor?</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="formato" value="Prática"><div class="opt-dot"></div><span class="opt-text">Fazendo — projetos práticos, hands-on</span></label>
+          <label class="opt"><input type="radio" name="formato" value="Vídeo/curso"><div class="opt-dot"></div><span class="opt-text">Vídeo-aulas e cursos online</span></label>
+          <label class="opt"><input type="radio" name="formato" value="Mentoria"><div class="opt-dot"></div><span class="opt-text">Mentoria e conversas com especialistas</span></label>
+          <label class="opt"><input type="radio" name="formato" value="Leitura"><div class="opt-dot"></div><span class="opt-text">Documentação, artigos e livros</span></label>
+          <label class="opt"><input type="radio" name="formato" value="Em grupo"><div class="opt-dot"></div><span class="opt-text">Aprendizado em grupo / discussões no time</span></label>
+        </div>
+      </div>
+      <div class="question" data-q="tempo_semanal">
+        <span class="q-label">16. Quanto tempo por semana você toparia dedicar ao seu desenvolvimento?</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="tempo" value="até 1h"><div class="opt-dot"></div><span class="opt-text">Até 1 hora</span></label>
+          <label class="opt"><input type="radio" name="tempo" value="1–3h"><div class="opt-dot"></div><span class="opt-text">1 a 3 horas</span></label>
+          <label class="opt"><input type="radio" name="tempo" value="3–5h"><div class="opt-dot"></div><span class="opt-text">3 a 5 horas</span></label>
+          <label class="opt"><input type="radio" name="tempo" value="5h+"><div class="opt-dot"></div><span class="opt-text">Mais de 5 horas</span></label>
+        </div>
+      </div>
+      <div class="question" data-q="objetivo">
+        <span class="q-label">17. Qual é seu objetivo de carreira nos próximos 2 anos?</span>
+        <div class="options">
+          <label class="opt"><input type="radio" name="objetivo" value="Especialização técnica"><div class="opt-dot"></div><span class="opt-text">Me tornar especialista técnico na minha área</span></label>
+          <label class="opt"><input type="radio" name="objetivo" value="Liderança técnica"><div class="opt-dot"></div><span class="opt-text">Assumir função de Tech Lead ou Arquiteto</span></label>
+          <label class="opt"><input type="radio" name="objetivo" value="Gestão de pessoas"><div class="opt-dot"></div><span class="opt-text">Migrar para gestão de pessoas / produto</span></label>
+          <label class="opt"><input type="radio" name="objetivo" value="Explorar novas áreas"><div class="opt-dot"></div><span class="opt-text">Explorar áreas diferentes (IA, dados, cloud…)</span></label>
+          <label class="opt"><input type="radio" name="objetivo" value="Consolidar conhecimento"><div class="opt-dot"></div><span class="opt-text">Consolidar o que já sei e entregar mais valor</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">Suas palavras (opcional)</div>
+      <div class="question">
+        <span class="q-label">18. Qual é o seu maior "superpoder" no trabalho?</span>
+        <textarea name="superpoder" rows="2" placeholder="Ex: resolução rápida de bugs, comunicação com stakeholders..."></textarea>
+      </div>
+      <div class="question">
+        <span class="q-label">19. Qual é o maior obstáculo no seu desenvolvimento hoje?</span>
+        <textarea name="barreira" rows="2" placeholder="Ex: falta de tempo, falta de direcionamento..."></textarea>
+      </div>
+      <div class="question">
+        <span class="q-label">20. O que você espera de um programa de desenvolvimento para o seu time?</span>
+        <textarea name="expectativa" rows="2" placeholder="Escreva livremente..."></textarea>
+      </div>
+    </div>
+
+    <div class="error-box" id="error-box">Não foi possível enviar suas respostas. Verifique sua conexão e tente novamente.</div>
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">Enviar</button>
+  </div>
+
+  <div id="form-sending" style="display:none" class="sending-msg">
+    <div style="font-size:28px;margin-bottom:12px">⏳</div>
+    <p>Enviando suas respostas...</p>
+  </div>
+
+  <div id="form-success" style="display:none" class="success-msg">
+    <div style="width:52px;height:52px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#1D9E75">✓</div>
+    <h2>Pronto, <span id="success-name"></span>!</h2>
+    <p style="margin-top:8px">Suas respostas foram registradas.<br>Obrigado pela sua participação.</p>
+  </div>
+
+</div>
+
+<script>
+let userName = '';
+let userId = '';
+
+function initUser() {
+  try {
+    userId = localStorage.getItem('cbyk_uid');
+    if (!userId) { userId = 'U' + Date.now().toString(36).toUpperCase(); localStorage.setItem('cbyk_uid', userId); }
+    userName = localStorage.getItem('cbyk_name') || '';
+  } catch(e) { userId = 'U' + Math.random().toString(36).slice(2,8).toUpperCase(); }
+  renderIdBanner();
+}
+
+function renderIdBanner() {
+  const av = document.getElementById('id-av');
+  const ns = document.getElementById('id-name-show');
+  const sub = document.getElementById('id-sub');
+  if (userName) {
+    const parts = userName.trim().split(' ');
+    av.textContent = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+    ns.textContent = userName;
+    sub.textContent = 'Suas respostas serão registradas com este nome';
+    document.getElementById('name-row').style.display = 'none';
+    document.getElementById('edit-btn').style.display = 'inline';
+  } else {
+    av.textContent = '?';
+    ns.textContent = 'Como você se chama?';
+    sub.textContent = 'Informe seu nome para identificar suas respostas';
+    document.getElementById('name-row').style.display = 'flex';
+    document.getElementById('edit-btn').style.display = 'none';
+  }
+}
+
+function toggleNameEdit() {
+  const row = document.getElementById('name-row');
+  if (row.style.display === 'none') { row.style.display = 'flex'; document.getElementById('name-input').value = userName; document.getElementById('name-input').focus(); }
+  else row.style.display = 'none';
+}
+
+function saveName() {
+  const v = document.getElementById('name-input').value.trim();
+  if (!v) return;
+  userName = v;
+  try { localStorage.setItem('cbyk_name', v); } catch(e) {}
+  renderIdBanner();
+}
+
+document.getElementById('name-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') saveName(); });
+
+const scaleKeys = ['nivel_ia','open1','open2','open3','open4'];
+const radioKeys = ['squad','senioridade','area_tech','uso_ia','aprender_tech','disc1','disc2','disc3','formato','tempo','objetivo'];
+const allQCount = radioKeys.length + scaleKeys.length + 1;
+
+function buildScales() {
+  scaleKeys.forEach(function(id) {
+    const el = document.getElementById('sc-' + id);
+    if (!el) return;
+    el.innerHTML = '';
+    for (var i = 1; i <= 5; i++) {
+      var b = document.createElement('button');
+      b.className = 'scale-btn'; b.textContent = i; b.dataset.q = id; b.dataset.v = i;
+      b.onclick = function() {
+        document.querySelectorAll('.scale-btn[data-q="' + this.dataset.q + '"]').forEach(function(x) { x.classList.remove('selected'); });
+        this.classList.add('selected'); updateProgress();
+      };
+      el.appendChild(b);
+    }
+  });
+}
+
+function updateProgress() {
+  var n = 0;
+  radioKeys.forEach(function(k) { if (document.querySelector('input[name="' + k + '"]:checked')) n++; });
+  scaleKeys.forEach(function(k) { if (document.querySelector('.scale-btn[data-q="' + k + '"].selected')) n++; });
+  var age = document.getElementById('idade-input').value;
+  if (age && parseInt(age) >= 16 && parseInt(age) <= 80) n++;
+  document.getElementById('prog').style.width = Math.round(n / allQCount * 100) + '%';
+  document.getElementById('prog-label').textContent = n + ' de ' + allQCount + ' respondidas';
+}
+
+function getR(n) { var r = document.querySelector('input[name="' + n + '"]:checked'); return r ? r.value : null; }
+function getS(id) { var b = document.querySelector('.scale-btn[data-q="' + id + '"].selected'); return b ? parseInt(b.dataset.v) : null; }
+
+function getDisc() {
+  var v = {D:0,I:0,S:0,C:0};
+  ['disc1','disc2','disc3'].forEach(function(q) { var x = getR(q); if (x) v[x]++; });
+  return Object.entries(v).sort(function(a,b) { return b[1]-a[1]; })[0][0];
+}
+
+function getIAScore() {
+  var vals = ['open1','open2','open3','open4'].map(getS).filter(Boolean);
+  return vals.length ? (vals.reduce(function(a,b) { return a+b; }, 0) / vals.length) : null;
+}
+
+function submitForm() {
+  if (!userName) {
+    var v = document.getElementById('name-input').value.trim();
+    if (!v) { document.getElementById('name-input').focus(); document.getElementById('name-input').style.borderColor = '#E24B4A'; setTimeout(function() { document.getElementById('name-input').style.borderColor = ''; }, 2000); return; }
+    userName = v; try { localStorage.setItem('cbyk_name', v); } catch(e) {}
+  }
+  var squad = getR('squad');
+  if (!squad) { alert('Por favor, selecione sua squad.'); return; }
+  var idade = parseInt(document.getElementById('idade-input').value);
+  if (!idade || idade < 16 || idade > 80) { alert('Por favor, informe uma idade válida.'); return; }
+
+  var ia = getIAScore();
+  var payload = {
+    id: 'R' + Date.now().toString(36).toUpperCase(),
+    nome: userName, userId: userId, squad: squad, idade: idade,
+    senioridade: getR('senioridade') || '—', area_tech: getR('area_tech') || '—',
+    nivel_ia: getS('nivel_ia') || '—', uso_ia: getR('uso_ia') || '—',
+    aprender_tech: getR('aprender_tech') || '—', disc: getDisc(),
+    ia_score: ia ? parseFloat(ia.toFixed(1)) : null,
+    formato: getR('formato') || '—', tempo: getR('tempo') || '—',
+    objetivo: getR('objetivo') || '—',
+    superpoder: document.querySelector('textarea[name="superpoder"]').value,
+    barreira: document.querySelector('textarea[name="barreira"]').value,
+    expectativa: document.querySelector('textarea[name="expectativa"]').value,
+    ts: new Date().toLocaleString('pt-BR')
+  };
+
+  document.getElementById('form-wrap').style.display = 'none';
+  document.getElementById('form-sending').style.display = 'block';
+  document.getElementById('error-box').style.display = 'none';
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then(function() {
+    document.getElementById('form-sending').style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+    document.getElementById('success-name').textContent = userName.split(' ')[0];
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }).catch(function() {
+    document.getElementById('form-sending').style.display = 'none';
+    document.getElementById('form-wrap').style.display = 'block';
+    document.getElementById('error-box').style.display = 'block';
+  });
+}
+
+document.querySelectorAll('.opt').forEach(function(opt) {
+  opt.addEventListener('click', function() {
+    var name = this.querySelector('input').getAttribute('name');
+    document.querySelectorAll('input[name="' + name + '"]').forEach(function(i) { var o = i.closest('.opt'); if (o) o.classList.remove('selected'); });
+    this.classList.add('selected'); updateProgress();
+  });
+});
+
+initUser();
+buildScales();
+</script>
+</body>
+</html>
